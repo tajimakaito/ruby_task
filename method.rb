@@ -1,33 +1,48 @@
-puts <<~TEXT
-旅行プランを選択してください
-1. 沖縄旅行(¥10,000)
-2. 北海道旅行(¥20,000)
-3. 九州旅行(¥15,000)
-TEXT
+plans = [
+  {destination: "沖縄",price: 10000},
+  {destination: "北海道",price: 20000},
+  {destination: "九州",price: 15000}
+]
 
-plan_num = gets.chomp.to_i
-
-def plan_num(destination, price)
-puts "#{destination}ですね、何人で行きますか？"
-
-num_people = gets.chomp.to_i
-return "人数を選択してください" if num_people <= 0
-if num_people >= 5
-  puts <<~TEXT
-  5人以上なので10%割引となります
-  合計金額:¥#{(num_people * price * 0.9).floor}
-  TEXT
-else
-  puts "合計金額:¥#{num_people * price}"
- end
+def disp_plans(plans)
+  puts "旅行プランを選択して下さい！"
+  plans.each.with_index(1) do |plan, i|
+    puts "#{i}. #{plan[:destination]}旅行(¥#{plan[:price]})"
+  end
 end
 
-if plan_num == 1
-  puts plan_num("沖縄旅行", 10000)
-elsif plan_num == 2
-  puts plan_num("北海道旅行", 20000)
-elsif plan_num == 3
-  puts plan_num("九州旅行", 15000)
-else
-  puts "1~3から選択してください"
+def choose_plans(plans)
+  while true
+    print "プランを選択 > "
+    select_plan_num = gets.to_i
+    break if (1..3).include?(select_plan_num)
+    puts "1~3のプランから選んで下さい。"
+  end
+    plans[select_plan_num - 1]
 end
+
+def decide_num_people(chosen_plan)
+  puts "#{chosen_plan[:destination]}旅行ですね、何人でいきますか？"
+  while true
+    print "人数を入力 > "
+    select_num_people = gets.to_i
+    break if select_num_people >= 1
+    puts "1人以上選択して下さい。"
+  end
+  select_num_people
+end
+
+def calculate_charges(chosen_plan, select_num_people)
+  total_price = chosen_plan[:price] * select_num_people
+  if select_num_people >= 5
+    puts "5人以上なので10%割引となります。"
+    total_price *= 0.9
+  end
+  puts "合計料金:¥#{total_price.floor}"
+end
+
+
+disp_plans(plans)
+chosen_plan = choose_plans(plans)
+select_num_people = decide_num_people(chosen_plan)
+calculate_charges(chosen_plan, select_num_people)
